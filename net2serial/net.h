@@ -30,5 +30,7 @@
 
 int net_open(int portnumber);
 int net_accept(int socket_fd, struct sockaddr_in * client_addr, int timeout);
+int net_read(int fd, uint8_t *buf, const size_t len, int timeout);
+int net_write(int fd, uint8_t *buf, const size_t len, int timeout);
 
 #endif

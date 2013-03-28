@@ -1,0 +1,1 @@
+make CC=mips-openwrt-linux-uclibc-gcc LD=mips-openwrt-linux-uclibc-ld $1

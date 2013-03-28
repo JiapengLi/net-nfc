@@ -9,7 +9,7 @@ typedef enum{
 
 int main(int argc, char *argv[])
 {
-	int serial, net, client;
+	int serial, net, client, client_tmp;
 	struct sockaddr_in client_addr;
 	uint8_t buf[300];
 	int ret,i;
@@ -62,6 +62,31 @@ int main(int argc, char *argv[])
 				}
 				break;
 			case SYS_STA_CONNECTED:
+				ret = net_read(client, buf, 128, 30);
+				if(ret>0){
+					uart_write(serial, buf, ret, 0);
+				}else if(ret == -1){
+					printf("Close client:0\n");
+					close(client);
+					sys_sta = SYS_STA_IDLE;
+				}
+				
+				ret = uart_read(serial, buf, 128, 30);
+				if(ret>0){
+					if((net_write(client, buf, ret, 0)) == -1){
+						printf("Close client:1\n");
+						close(client);
+						sys_sta = SYS_STA_IDLE;
+					}
+				}
+				
+				client_tmp = net_accept(net, &client_addr, 30);
+				if(client_tmp>0){
+					printf("Another client log in, reject\n");
+					net_write(client_tmp, "Connection has created!!!", \
+								strlen("Connection has created!!!"), 0);
+					close(client_tmp);
+				}
 				break;
 		}
 	}
