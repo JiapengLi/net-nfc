@@ -19,6 +19,8 @@
 #define PN532_BRTY_424KBPS                  0x02
 #define PN532_BRTY_JEWEL                    0x04
 
+#define PN532_READTIMEOUT                   100
+
 class PN532_THREAD : public QThread
 {
     Q_OBJECT

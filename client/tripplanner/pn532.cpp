@@ -23,7 +23,7 @@ PN532_THREAD :: PN532_THREAD()
 void PN532_THREAD :: semBufProducer(quint8 data)
 {
     freeSpace->acquire();
-    std :: cerr << "write buf\r\n";
+//    std :: cerr << "write buf\r\n";
     semBuffer[producerCnt++] = data;
     if(producerCnt == BufferSize){
         producerCnt = 0;
@@ -35,7 +35,7 @@ quint8 PN532_THREAD :: semBufConsumer()
 {
     quint8 ret;
     usedSpace->acquire();
-    std :: cerr << "read buf\r\n";
+//    std :: cerr << "read buf\r\n";
     ret = semBuffer[consumerCnt++];
     if(consumerCnt == BufferSize){
         consumerCnt = 0;
@@ -176,7 +176,7 @@ int PN532_THREAD :: SAMConfiguration(quint8 *buf, uint8_t mode, uint8_t timeout,
     if(send_pkt_wait_ack(buf, 5) <0){
         return -1;
     }
-    if(receive_pkt(buf, 2+7, 600) != 2+7){
+    if(receive_pkt(buf, 2+7, PN532_READTIMEOUT) != 2+7){
         return -2;
     }
     if(frame_check(buf, 2+7)){
@@ -198,7 +198,7 @@ int PN532_THREAD :: GetFirmwareVersion(quint8 *buf)
         return -1;
     }
 
-    if(receive_pkt(buf, 6+7, 600) != 6+7){
+    if(receive_pkt(buf, 6+7, PN532_READTIMEOUT) != 6+7){
         return -2;
     }
     if(frame_check(buf, 6+7)){
@@ -362,7 +362,7 @@ int PN532_THREAD :: send_pkt(quint8 *cmd, int len)
 
     res = tcpSocket->write(block);
     if((res-7) == len){
-        std::cerr << "write num:" << res << "\r\n";
+//        std::cerr << "write num:" << res << "\r\n";
         return len;
     }
     tcpSocket->waitForBytesWritten();
@@ -373,8 +373,8 @@ int PN532_THREAD :: wait_ack()
 {
     quint8 buf[6];
     int i=0;
-    if(receive_pkt(buf, 6, 300) == 6){
-        std::cerr << "ack received\r\n";
+    if(receive_pkt(buf, 6, PN532_READTIMEOUT) == 6){
+//        std::cerr << "ack received\r\n";
         for(i=0; i<6; i++){
             if(buf[i]!=ack[i]){
                 break;
