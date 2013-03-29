@@ -49,7 +49,7 @@ int net_accept(int socket_fd, struct sockaddr_in * client_addr, int timeout)
 		perror("select error");
 		return -1;
 	}else if(res == 0){
-		perror("select timeout");
+		//perror("select timeout");
 		return -1;
 	}else{
 		perror("select signal**");
