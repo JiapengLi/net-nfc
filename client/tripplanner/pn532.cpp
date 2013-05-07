@@ -67,9 +67,11 @@ int PN532_THREAD :: setWorkMode(workMode_t mode)
     return 0;
 }
 
-void PN532_THREAD::connectToServer()
+void PN532_THREAD::connectToServer(QString addr, quint16 port)
 {
     std :: cerr << "connect to server\r\n";
+    hostaddr = addr;
+    portnum = port;
     setWorkMode(WORK_MODE_CONNECT_TO_HOST);
     if(isRunning()){
         return;
@@ -79,6 +81,7 @@ void PN532_THREAD::connectToServer()
 
 void PN532_THREAD ::begin()
 {
+    emit connected();
     setWorkMode(WORK_MODE_BEGIN);
     std::cerr << "begin\r\n";
 }
@@ -89,6 +92,7 @@ void PN532_THREAD :: error(QAbstractSocket::SocketError err)
         /** ignore timeout error */
         return;
     }
+    emit errors();
     std :: cerr << "error ocurred\r\n";
     std :: cerr << qPrintable(tcpSocket->errorString()) << "\r\n";
 }
@@ -100,6 +104,7 @@ void PN532_THREAD :: closeConnection()
 
 void PN532_THREAD :: connectionClosedByServer()
 {
+    emit disconnected();
     std::cerr << "Error: Connection closed by server\r\n";
 //    closeConnection();
 }
@@ -129,7 +134,7 @@ void PN532_THREAD :: run()
             break;
         case WORK_MODE_CONNECT_TO_HOST:
             work_mode = WORK_MODE_IDLE;
-            tcpSocket->connectToHost(QHostAddress::QHostAddress("132.147.160.1"),8888);
+            tcpSocket->connectToHost(QHostAddress::QHostAddress(hostaddr),portnum);
             if (tcpSocket->waitForConnected(1000)){
                  qDebug("Connected!");
             }else{
@@ -433,7 +438,7 @@ int PN532_THREAD :: receive_pkt(quint8 *cmd, int len, int timeout)
             received_bytes_count += res;
         }else{
             if(tcpSocket->waitForReadyRead(timeout) == 0){
-                std::cerr << "read timeout\r\n";
+                //std::cerr << "read timeout\r\n";
                 if(received_bytes_count){
                     return received_bytes_count;
                 }

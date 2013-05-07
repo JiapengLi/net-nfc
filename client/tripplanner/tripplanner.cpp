@@ -51,7 +51,7 @@ void TripPlanner::connectToServer()
     tcpSocket.connectToHost("tripserver.zugbahn.de", 6178);
 #endif
 
-    pn532.connectToServer();
+    pn532.connectToServer("192.168.2.1", 8888);
     tableWidget->setRowCount(0);
     searchButton->setEnabled(false);
     stopButton->setEnabled(true);
@@ -142,6 +142,8 @@ void TripPlanner::addList(quint8 *buf, int len)
     }
     tableWidget->setItem(row, 0, new QTableWidgetItem(tr("%1").arg(row)));
     tableWidget->setItem(row, 1, new QTableWidgetItem(buf_hex));
+
+    tableWidget->resizeColumnsToContents();
 }
 
 void TripPlanner::updateTableWidget()

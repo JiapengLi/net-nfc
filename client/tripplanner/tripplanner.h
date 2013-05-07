@@ -29,8 +29,6 @@ private slots:
     void error(QAbstractSocket::SocketError err);
     void addList(quint8 *buf, int len);
 
-
-
 private:
     void closeConnection();
     /** PN532 */

@@ -61,7 +61,7 @@ public:
     void readSemBuf(quint8 *buf, int len);
 
 public slots:
-    void connectToServer();
+    void connectToServer(QString addr, quint16 port);
     void connectionClosedByServer();
     void begin();
     void closeConnection();
@@ -70,6 +70,10 @@ signals:
     void getFrame(quint8 *, int);
     void getId(quint8 *, int);
     void beginSig();
+
+    void connected();
+    void disconnected();
+    void errors();
 
 protected:
     void run();
@@ -80,6 +84,8 @@ private:
     static const uint8_t ack[6];
     static const int BufferSize;
     workMode_t work_mode;
+    QString hostaddr;
+    quint16 portnum;
     quint8 buf[1024];
 
     quint8 semBuffer[1024];
